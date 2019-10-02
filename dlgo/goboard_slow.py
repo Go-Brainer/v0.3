@@ -2,7 +2,7 @@
 #Slow bot implementation based on "Deep Learning and the Game of Go" chapter 3
 
 import copy
-from gotypes import Player
+from dlgo.gotypes import Player
 
 
 #There are three basic kinds of moves in go:
