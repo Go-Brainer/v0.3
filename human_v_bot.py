@@ -14,7 +14,7 @@ def clear():
 
 
 def main():
-    board_size = 5
+    board_size = 9
     game = goboard.GameState.new_game(board_size)
     bot = naive.RandomBot()
     print_board(game.board)
