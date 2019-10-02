@@ -6,9 +6,9 @@
 - [x] Have players alternate placing black/white stones on the board (black goes first)
 - [x] Stones of the same color can be connected into groups
 - [x] Groups with no liberties are removed from the board
-- [ ] Use Chinese scoring to define the winner: Player with most territory + most stones - komi handicap is the winner
-- [ ] Komi is the handicap for the black player to offset the advantage of going first (usually 5.5 to 7.5 for black, 0 for white)
+- [x] Use Chinese scoring to define the winner: Player with most territory + most stones - komi handicap is the winner
+- [x] Komi is the handicap for the black player to offset the advantage of going first (usually 5.5 to 7.5 for black, 0 for white)
 - [x] Killing your own groups of stones is not allowed (Japanese rules) 
 - [x] Game can play bot vs. bot or human vs. bot
 - [ ] Be written in Python with no issues shown in PyCharm
-- [ ] Project directory pushed to a new GitHub repository listed above
+- [x] Project directory pushed to a new GitHub repository listed above
