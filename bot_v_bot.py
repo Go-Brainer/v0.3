@@ -15,16 +15,16 @@ def clear():
 
 
 def main():
-    board_size = 9
+    board_size = 5
     game = goboard_slow.GameState.new_game(board_size)
     bots = {
             gotypes.Player.black: naive.RandomBot(),
             gotypes.Player.white: naive.RandomBot(),
     }
     while not game.is_over():
-        time.sleep(.3)
+        time.sleep(.05)
         
-        clear()
+        # clear()
         print_board(game.board)
         bot_move = bots[game.next_player].select_move(game)
         print_move(game.next_player, bot_move)
