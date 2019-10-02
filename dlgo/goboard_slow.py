@@ -3,6 +3,7 @@
 
 import copy
 from dlgo.gotypes import Player
+from dlgo.scoring import compute_game_result
 
 
 # There are three basic kinds of moves in go:
@@ -209,3 +210,11 @@ class GameState():
                 self.board.get(move.point) is None and  # play in bounds and open spot
                 not self.is_move_self_capture(self.next_player, move) and  # play is not self-capture
                 not self.does_move_violate_ko(self.next_player, move))  # play makes unique state
+
+    def winner(self):
+        if not self.is_over():
+            return None
+        if self.last_move.is_resign:
+            return self.next_player
+        game_result = compute_game_result(self)
+        return game_result.winner
