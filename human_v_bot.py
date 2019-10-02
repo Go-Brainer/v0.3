@@ -14,21 +14,25 @@ def clear():
 
 
 def main():
-    board_size = 9
+    board_size = 5
     game = goboard.GameState.new_game(board_size)
     bot = naive.RandomBot()
+    print_board(game.board)
 
     while not game.is_over():
+        # Since making a play is necessary for changing board state but also changes
+        # next player we must save the current player
+        player_before = game.next_player
         if game.next_player == gotypes.Player.black:
-            human_move = input('-- ')
+            human_move = input('-- ').upper()
             point = point_from_coords(human_move.strip())
             move = goboard.Move.play(point)
         else:
             move = bot.select_move(game)
         clear()
-        print_board(game.board)
-        print_move(game.next_player, move)
         game = game.apply_move(move)
+        print_board(game.board)
+        print_move(player_before, move)
 
 
 if __name__ == '__main__':
