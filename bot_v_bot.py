@@ -17,6 +17,7 @@ def clear():
 
 def main():
     board_size = 9
+    komi = 3.5
     game = goboard_slow.GameState.new_game(board_size)
     bots = {
             gotypes.Player.black: naive.RandomBot(),
@@ -31,10 +32,11 @@ def main():
         print_move(game.next_player, bot_move)
         game = game.apply_move(bot_move)
         
-    results = compute_game_result(game)
+    results = compute_game_result(game, komi)
+    print("With a komi of %.1f" % komi)
     print("White Final Score: %d" % results.w)
     print("Black Final Score: %.1f" % (results.b - results.komi))
-    print(results.winner, "wins!")
+    print(results.winner, "wins by %.1f points" % results.winning_margin)
 
 
 if __name__ == '__main__':

@@ -26,9 +26,9 @@ def main():
         player_before = game.next_player
         if game.next_player == gotypes.Player.black:
             human_move = input('-- ').upper()
-            if match("P[ASS]*", human_move):
+            if match("P(ASS)*", human_move):
                 move = goboard.Move.pass_turn()
-            elif match("R[ESIGN]*", human_move):
+            elif match("R(ESIGN)*", human_move):
                 move = goboard.Move.resign()
             else:
                 point = point_from_coords(human_move.strip())
