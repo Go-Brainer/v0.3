@@ -136,7 +136,6 @@ class Board():
                     neighbor_string.add_liberty(point)
             self._grid[point] = None
 
-
 # end of class Board
 
 
