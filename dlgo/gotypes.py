@@ -16,7 +16,7 @@ class Player(Enum):
     
 class Point(namedtuple('Point', 'row col')):
     #Returns a list of all points adjacent to self
-    def neightbors(self):
+    def neighbors(self):
         return [
                 Point(self.row - 1, self.col),
                 Point(self.row + 1, self.col),
