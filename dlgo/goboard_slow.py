@@ -103,10 +103,10 @@ class Board():
             other_color_string.remove_liberty(point)
         for other_color_string in adjacent_opposite_color:
             if other_color_string.num_liberties == 0:
-                self.remove_string(other_color_string)
+                self._remove_string(other_color_string)
     #end of place_stone
 
-    def is_one_grid(self, point):
+    def is_on_grid(self, point):
         return (1 <= point.row <= self.num_rows) and \
             (1 <= point.col <= self.num_cols)
             
