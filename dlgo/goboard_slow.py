@@ -86,8 +86,9 @@ class Board():
             neighbor_string = self._grid.get(neighbor)
             if neighbor_string is None:
                 liberties.append(neighbor)
-            elif neighbor_string not in adjacent_same_color:
-                adjacent_same_color.append(neighbor_string)
+            elif neighbor_string.color == player:
+                if neighbor_string not in adjacent_same_color:
+                    adjacent_same_color.append(neighbor_string)
             else:
                 if neighbor_string not in adjacent_opposite_color:
                     adjacent_opposite_color.append(neighbor_string)
