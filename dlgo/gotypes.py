@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-#Types based on "Deep Learning and the Game of Go" chapter 3
+# Types based on "Deep Learning and the Game of Go" chapter 3
 
 from enum import Enum
 from collections import namedtuple
+
 
 class Player(Enum):
     black = 1
@@ -15,7 +16,7 @@ class Player(Enum):
     
     
 class Point(namedtuple('Point', 'row col')):
-    #Returns a list of all points adjacent to self
+    # Returns a list of all points adjacent to self
     def neighbors(self):
         return [
                 Point(self.row - 1, self.col),

@@ -6,11 +6,13 @@ from dlgo.utils import print_board, print_move
 import time
 from os import system, name
 
+
 def clear():
     if name == 'nt':
         _ = system('cls')
     else:
         _ = system('clear')
+
 
 def main():
     board_size = 9

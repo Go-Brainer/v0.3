@@ -4,6 +4,7 @@ from dlgo import gotypes
 from dlgo.utils import print_board, print_move, point_from_coords
 from six.moves import input
 from os import name, system
+from re import match
 
 
 def clear():
@@ -25,8 +26,13 @@ def main():
         player_before = game.next_player
         if game.next_player == gotypes.Player.black:
             human_move = input('-- ').upper()
-            point = point_from_coords(human_move.strip())
-            move = goboard.Move.play(point)
+            if match("P[ASS]*", human_move):
+                move = goboard.Move.pass_turn()
+            elif match("R[ESIGN]*", human_move):
+                move = goboard.Move.resign()
+            else:
+                point = point_from_coords(human_move.strip())
+                move = goboard.Move.play(point)
         else:
             move = bot.select_move(game)
         clear()
