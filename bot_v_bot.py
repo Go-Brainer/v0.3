@@ -4,6 +4,13 @@ from dlgo import goboard_slow
 from dlgo import gotypes
 from dlgo.utils import print_board, print_move
 import time
+from os import system, name
+
+def clear():
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
 
 def main():
     board_size = 9
@@ -15,7 +22,7 @@ def main():
     while not game.is_over():
         time.sleep(.3)
         
-        print(chr(27) + "[2J")
+        clear()
         print_board(game.board)
         bot_move = bots[game.next_player].select_move(game)
         print_move(game.next_player, bot_move)
