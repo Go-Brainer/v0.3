@@ -137,7 +137,6 @@ class Board():
                     neighbor_string.add_liberty(point)
             self._grid[point] = None
 
-
 # end of class Board
 
 
@@ -218,3 +217,11 @@ class GameState():
             return self.next_player
         game_result = compute_game_result(self)
         return game_result.winner
+        
+    def print_game_results(self, komi):
+        results = compute_game_result(self, komi)
+        print("With a komi of %.1f" % komi)
+        print("White Final Score: %d" % results.w)
+        print("Black Final Score: %.1f" % (results.b - komi))
+        winner_str = "White" if results.winner == Player.white else "Black"
+        print("%s wins by %.1f!" % (winner_str, results.winning_margin))

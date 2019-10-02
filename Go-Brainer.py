@@ -4,10 +4,10 @@ from dlgo import gotypes
 from dlgo.utils import print_board, print_move, point_from_coords
 from six.moves import input
 from os import name, system
-from dlgo.scoring import compute_game_result
 from re import match
 from sys import argv
 import time
+import argparse
 
 
 def clear():
@@ -17,42 +17,53 @@ def clear():
         _ = system('clear')
 
 
-def print_usage():
-    print("Usage: python3 Go-Brainer.py <5-19> <hb|bh|bb>")
+def get_options(args=argv[1:]):
+    parser = argparse.ArgumentParser(prog="Go-Brainer", description="An AI Go Bot")
+
+    parser.add_argument('-s', '--size', type=int, default=9, help="Board size is n by n. Must be between 5 and 19.")
+    parser.add_argument('-m', '--human', type=lambda c: c.lower(), choices=['b', 'w'],
+                        help="Enables human v. bot mode and sets human's color.")
+    parser.add_argument('-k', '--komi', type=float, default=7.5, help="Sets komi. Must be between 0 and 10.")
+
+    options = parser.parse_args(args)
+    return options
 
 
 def main():
-    if len(argv) is not 3:
-        print_usage()
-        exit(0)
-    if not argv[1].isnumeric() or \
-            int(argv[1]) < 5 or \
-            int(argv[1]) > 19:
-        print_usage()
-        exit(0)
+    options = get_options(argv[1:])
+    size = abs(options.size)
+    human = options.human
+    komi = abs(options.komi)
 
-    game = goboard.GameState.new_game(int(argv[1]))
+    if size < 5 or size > 19:
+        print("Board size must be between 5 and 19")
+        exit(-1)
 
-    human = None
+    if komi < 0 or komi > 10:
+        print("Komi must be between 0 and 10")
+        exit(-1)
+
+    game = goboard.GameState.new_game(size)
     players = {}
-    p = argv[2].lower()
-    if p == "hb":
+    if human is None:
+        players = {
+            gotypes.Player.black: naive.RandomBot(),
+            gotypes.Player.white: naive.RandomBot()
+        }
+    elif human == 'b':
+
         players = {
             gotypes.Player.black: human,
             gotypes.Player.white: naive.RandomBot()
         }
-    elif p == "bh":
+    elif human == 'w':
         players = {
             gotypes.Player.black: naive.RandomBot(),
             gotypes.Player.white: human
         }
-    elif p == "bb":
-        players = {
-            gotypes.Player.black: naive.RandomBot(),
-            gotypes.Player.white: naive.RandomBot()
-        }
     else:
-        print_usage()
+        print(options)
+        print("Invalid options error")
         exit(0)
 
     print_board(game.board)
@@ -67,9 +78,9 @@ def main():
             while not valid_move:
                 try:
                     human_move = input('-- ').upper()
-                    if match("PA(S)*", human_move):
+                    if match("P(ASS)*$", human_move):
                         move = goboard.Move.pass_turn()
-                    elif match("RE(SIGN)*", human_move):
+                    elif match("R(ESIGN)*$", human_move):
                         move = goboard.Move.resign()
                     else:
                         point = point_from_coords(human_move.strip())
@@ -91,14 +102,11 @@ def main():
         clear()
         game = game.apply_move(move)
         print_board(game.board)
+        time.sleep(.1)
         print_move(player_before, move)
-        time.sleep(.3)
     # end of main game loop
 
-    results = compute_game_result(game)
-    print("White Final Score: %d" % results.w)
-    print("Black Final Score: %.1f" % (results.b - results.komi))
-    print(results.winner, "wins!")
+    game.print_game_results(komi)
 
 
 if __name__ == '__main__':
