@@ -25,7 +25,6 @@ def main():
         # next player we must save the current player
         player_before = game.next_player
         if game.next_player == gotypes.Player.black:
-<<<<<<< Updated upstream
             human_move = input('-- ').upper()
             if match("P[ASS]*", human_move):
                 move = goboard.Move.pass_turn()
@@ -34,7 +33,6 @@ def main():
             else:
                 point = point_from_coords(human_move.strip())
                 move = goboard.Move.play(point)
-=======
             move = goboard.Move.resign()    # assign move to resign to stop a warning
             valid_move = False              # emulates do-while loop
             while not valid_move:
@@ -50,7 +48,6 @@ def main():
                         valid_move = game.is_valid_move(move)
                     if not valid_move:
                         print("That move is invalid, please try again.")
->>>>>>> Stashed changes
         else:
             move = bot.select_move(game)
         clear()
