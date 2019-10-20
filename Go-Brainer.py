@@ -40,7 +40,7 @@ def get_options(args=argv[1:]):
     parser.add_argument('b_agent', type=lambda c: c.lower(), choices=['r', 'd', 'h'],
                         help="Choose Player Agent for black: r - random, d - depth pruned minimax, h - human")
     parser.add_argument('w_agent', type=lambda c: c.lower(), choices=['r', 'd', 'h'],
-                        help="Choose Player Agent for black: r - random, d - depth pruned minimax, h - human")
+                        help="Choose Player Agent for white: r - random, d - depth pruned minimax, h - human")
     parser.add_argument('-s', '--size', type=int, default=5, help="Board size is n by n. Must be between 5 and 19.")
     parser.add_argument('-k', '--komi', type=float, default=7.5, help="Sets komi. Must be between 0 and 10.")
 
