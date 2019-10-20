@@ -1,7 +1,7 @@
 import dlgo.agent.naive_fast as naive
-from dlgo.agent.human_agent import HumanAgent
-from dlgo.minimax.depthprune import DepthPrunedAgent
-from dlgo.minimax.alphabeta import AlphaBetaAgent
+from dlgo.agent import HumanAgent
+from dlgo.minimax import DepthPrunedAgent, AlphaBetaAgent
+from dlgo.mcts import MCTSAgent
 from dlgo import goboard_fast as goboard
 from dlgo import gotypes
 from dlgo.utils import print_board, print_move
@@ -61,6 +61,8 @@ def choose_agent(choice):
         return HumanAgent()
     elif choice == 'a':
         return AlphaBetaAgent(3, capture_diff)
+    elif choice == 'm':
+        return MCTSAgent(500, 1.5)
     else:
         print(choice)
         print("Invalid options error")
@@ -93,11 +95,10 @@ def main():
         # next player we must save the current player
         player_before = game.next_player
         move = players[game.next_player].select_move(game)
-        print(move)
-        #clear()
+        clear()
         game = game.apply_move(move)
         print_board(game.board)
-        time.sleep(1)
+        time.sleep(.05)
         print_move(player_before, move)
     # end of main game loop
 
