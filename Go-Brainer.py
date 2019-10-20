@@ -1,8 +1,8 @@
-import dlgo.agent.naive as naive
+import dlgo.agent.naive_fast as naive
 from dlgo.agent.human_agent import HumanAgent
 from dlgo.minimax.depthprune import DepthPrunedAgent
 from dlgo.minimax.alphabeta import AlphaBetaAgent
-from dlgo import goboard
+from dlgo import goboard_fast as goboard
 from dlgo import gotypes
 from dlgo.utils import print_board, print_move
 from os import name, system
@@ -36,8 +36,8 @@ def capture_diff(game_state):
 
 
 def get_options(args=argv[1:]):
-    agent_choices = ['h', 'r', 'd', 'a']
-    agent_help_str = "h:human, r:random, d:depth-pruned, a:alpha-beta"
+    agent_choices = ['h', 'r', 'd', 'a', 'm']
+    agent_help_str = "h:human, r:random, d:depth-pruned, a:alpha-beta, m:Mote-Carlo-Tree_Search"
 
     parser = argparse.ArgumentParser(prog="Go-Brainer", description="An AI Go Bot")
 
@@ -51,6 +51,20 @@ def get_options(args=argv[1:]):
     options = parser.parse_args(args)
     return options
 
+
+def choose_agent(choice):
+    if choice == 'r':
+        return naive.FastRandomBot()
+    elif choice == 'd':
+        return DepthPrunedAgent(3, capture_diff)
+    elif choice == 'h':
+        return HumanAgent()
+    elif choice == 'a':
+        return AlphaBetaAgent(3, capture_diff)
+    else:
+        print(choice)
+        print("Invalid options error")
+        exit(0)
 
 def main():
     options = get_options(argv[1:])
@@ -66,37 +80,10 @@ def main():
         exit(-1)
 
     game = goboard.GameState.new_game(size)
-    if options.b_agent == 'r':
-        b_agent = naive.RandomBot()
-    elif options.b_agent == 'd':
-        b_agent = DepthPrunedAgent(3, capture_diff)
-    elif options.b_agent == 'h':
-        b_agent = HumanAgent()
-    elif options.b_agent == 'a':
-        b_agent = AlphaBetaAgent(3, capture_diff)
-    else:
-        b_agent = None
-        print(options)
-        print("Invalid options error")
-        exit(0)
-
-    if options.w_agent == 'r':
-        w_agent = naive.RandomBot()
-    elif options.w_agent == 'd':
-        w_agent = DepthPrunedAgent(3, capture_diff)
-    elif options.w_agent == 'h':
-        w_agent = HumanAgent()
-    elif options.b_agent == 'a':
-        w_agent = AlphaBetaAgent(3, capture_diff)
-    else:
-        w_agent = None
-        print(options)
-        print("Invalid options error")
-        exit(0)
 
     players = {
-        gotypes.Player.black: b_agent,
-        gotypes.Player.white: w_agent
+        gotypes.Player.black: choose_agent(options.b_agent),
+        gotypes.Player.white: choose_agent(options.w_agent)
     }
 
     print_board(game.board)
@@ -106,10 +93,11 @@ def main():
         # next player we must save the current player
         player_before = game.next_player
         move = players[game.next_player].select_move(game)
-        clear()
+        print(move)
+        #clear()
         game = game.apply_move(move)
         print_board(game.board)
-        time.sleep(.1)
+        time.sleep(1)
         print_move(player_before, move)
     # end of main game loop
 
