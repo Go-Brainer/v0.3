@@ -10,12 +10,17 @@ Alex Vidal      avidal@csu.fullerton.edu
 
 ## Usage
 C:\PATH\>python Go-Brainer.py -h  
-usage: Go-Brainer [-h] [-s SIZE] [-m {b,w}] [-k KOMI]  
-  
-An AI Go Bot  
-  
-optional arguments:  
-  -h, --help            show this help message and exit  
-  -s SIZE, --size SIZE  Board size is n by n. Must be between 5 and 19.  
-  -m {b,w}, --human {b,w} Enables human v. bot mode and sets human's color.  
+usage: Go-Brainer [-h] [-s SIZE] [-k KOMI] {r,d,h} {r,d,h}
+
+An AI Go Bot
+
+positional arguments:
+  {r,d,h}               Choose Player Agent for black: r - random, d - depth
+                        pruned minimax, h - human
+  {r,d,h}               Choose Player Agent for black: r - random, d - depth
+                        pruned minimax, h - human
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SIZE, --size SIZE  Board size is n by n. Must be between 5 and 19.
   -k KOMI, --komi KOMI  Sets komi. Must be between 0 and 10.

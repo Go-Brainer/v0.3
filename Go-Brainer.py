@@ -1,6 +1,7 @@
 import dlgo.agent.naive as naive
 from dlgo.agent.human_agent import HumanAgent
 from dlgo.minimax.depthprune import DepthPrunedAgent
+from dlgo.minimax.alphabeta import AlphaBetaAgent
 from dlgo import goboard
 from dlgo import gotypes
 from dlgo.utils import print_board, print_move
@@ -35,12 +36,15 @@ def capture_diff(game_state):
 
 
 def get_options(args=argv[1:]):
+    agent_choices = ['h', 'r', 'd', 'a']
+    agent_help_str = "h:human, r:random, d:depth-pruned, a:alpha-beta"
+
     parser = argparse.ArgumentParser(prog="Go-Brainer", description="An AI Go Bot")
 
-    parser.add_argument('b_agent', type=lambda c: c.lower(), choices=['r', 'd', 'h'],
-                        help="Choose Player Agent for black: r - random, d - depth pruned minimax, h - human")
-    parser.add_argument('w_agent', type=lambda c: c.lower(), choices=['r', 'd', 'h'],
-                        help="Choose Player Agent for white: r - random, d - depth pruned minimax, h - human")
+    parser.add_argument('b_agent', type=lambda c: c.lower(), choices=agent_choices,
+                        help="Choose Player Agent for black: " + agent_help_str)
+    parser.add_argument('w_agent', type=lambda c: c.lower(), choices=agent_choices,
+                        help="Choose Player Agent for white: " + agent_help_str)
     parser.add_argument('-s', '--size', type=int, default=5, help="Board size is n by n. Must be between 5 and 19.")
     parser.add_argument('-k', '--komi', type=float, default=7.5, help="Sets komi. Must be between 0 and 10.")
 
@@ -68,6 +72,8 @@ def main():
         b_agent = DepthPrunedAgent(3, capture_diff)
     elif options.b_agent == 'h':
         b_agent = HumanAgent()
+    elif options.b_agent == 'a':
+        b_agent = AlphaBetaAgent(3, capture_diff)
     else:
         b_agent = None
         print(options)
@@ -80,6 +86,8 @@ def main():
         w_agent = DepthPrunedAgent(3, capture_diff)
     elif options.w_agent == 'h':
         w_agent = HumanAgent()
+    elif options.b_agent == 'a':
+        w_agent = AlphaBetaAgent(3, capture_diff)
     else:
         w_agent = None
         print(options)
