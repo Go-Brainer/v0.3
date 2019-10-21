@@ -4,7 +4,7 @@
 - [x] Create the generate_mcts_games file, which generates games by encoding the game state before each move, encodes the move as a one-hot vector, and applies it.
 - [x] Implement Monte-Carlo tree search, alpha-beta pruning and minimax (ch. 4). Create an MCTSAgent and let it play against itself.
 - [x] Create a program to create, and run Go games, and save them. Use it to generate 20 9x9 Go games, and store the features in features.py, and the labels in labels.py.
-- [ ] Confirm the CNN from listings 6.24-26 of your text runs, and produces the output shown in your text. Print out the probabilities of its recommended moves (see 6.26).
+- [x] Confirm the CNN from listings 6.24-26 of your text runs, and produces the output shown in your text. Print out the probabilities of its recommended moves (see 6.26).
 - [ ] Create the KGSIndex class that downloads SGF files from https://u-go.net/gamerecords, and download the files. (see listing 7.1).
 - [ ] Replay the (pretend) game from Listing 7.2. Make sure it replays the game correctly.
 - [ ] Create the Go data processor that can transform raw SGF data into features and labels for a machine learning algorithm.
