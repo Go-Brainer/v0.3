@@ -18,7 +18,7 @@ from multiprocessing import freeze_support
 def main():
     go_board_rows, go_board_cols = 19, 19
     num_classes = go_board_rows * go_board_cols
-    num_games = 1000
+    num_games = 10
 
     encoder = OnePlaneEncoder((go_board_rows, go_board_cols))  # <1>
 
