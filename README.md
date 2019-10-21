@@ -52,7 +52,7 @@ optional arguments:
 **KGS separate download script**
 python ./data/index_processor.py
 
-**KGS download with training**
-python 
+**KGS download with training generators**
+python ./train_generator
 
 
