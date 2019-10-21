@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 # tag::mcts_go_cnn_preprocessing[]
 import numpy as np
 from keras.models import Sequential
@@ -51,3 +53,23 @@ score = model.evaluate(X_test, Y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 # end::mcts_go_cnn_eval[]
+
+test_board = np.array([[[
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 1, -1,  1, -1, 0, 0, 0, 0,
+    0, 1, -1,  1, -1, 0, 0, 0, 0,
+    0, 0,  1, -1,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+]]]).reshape(1, 9, 9, 1)
+move_probs = model.predict(test_board)[0]
+i = 0
+for row in range(9):
+    row_formatted = []
+    for col in range(9):
+        row_formatted.append('{:.3f}'.format(move_probs[i]))
+        i += 1
+    print(' '.join(row_formatted))
