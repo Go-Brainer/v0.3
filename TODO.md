@@ -2,14 +2,14 @@
 # Also included: items not completed for Project Two
 ## CSUF Fall 2019: CPSC 481 - Artificial Intelligence with Dr. William McCarthy
 
-- [ ] Create the OnePlaneEncoder and SevenPlaneEncoder, and verify that they produce the correct output from the text.
+- [x] Create the OnePlaneEncoder and SevenPlaneEncoder, and verify that they produce the correct output from the text.
 - [ ] Add the Adagrad optimizer to allow adaptive gradient methods.
 - [ ] Train your Go bot using different hyperparameters to get best performance.
 
 - [ ] Be written in Python. No issues are shown in PyCharm (all source code screens shown a green checkmark at the top right hand corner).
 - [ ] Project directory pushed to a new GitHub repository listed above
 
-- [ ] Created an end-to-end application (DeepLearningAgent) to train/run a Go bot (ch 8.1)
+- [x] Created an end-to-end application (DeepLearningAgent) to train/run a Go bot (ch 8.1)
 - [ ] Used the web interface and flask server to play your Go bot using an attractive UI (ch 8.2)
 - [ ] Have created an AWS account (one for yourself and one for your bot) to allow training of your bot and deploying it. (ch. 8.3 and Appendix C)
 - [ ] Have installed gnugo as a LOCAL GTP server using the Go Text Protocol. The server can be run using a user interface such as Sabaki, Lizzie, GoRilla, or q5Go (Appendix C).
