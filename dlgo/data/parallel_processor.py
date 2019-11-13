@@ -138,7 +138,6 @@ class GoDataProcessor:
                 y = to_categorical(y.astype(int), 19 * 19)
                 feature_list.append(x)
                 label_list.append(y)
-
         features = np.concatenate(feature_list, axis=0)
         labels = np.concatenate(label_list, axis=0)
 
