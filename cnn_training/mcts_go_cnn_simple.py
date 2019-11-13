@@ -2,19 +2,20 @@ from __future__ import print_function
 
 # tag::mcts_go_cnn_simple_preprocessing[]
 import numpy as np
+import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Conv2D, Flatten  # <1>
 
 np.random.seed(123)
-X = np.load('../generated_games/features.npy')
-Y = np.load('../generated_games/labels.npy')
+X = np.load('../generated_games/features-40k.npy')
+Y = np.load('../generated_games/labels-40k.npy')
 
 samples = X.shape[0]
 size = 9
 input_shape = (size, size, 1)  # <2>
 
-X = X.reshape(samples, input_shape)  # <3>
+X = X.reshape((samples,) + input_shape)  # <3>
 
 train_samples = int(0.9*samples)
 X_train, X_test = X[:train_samples], X[train_samples:]
@@ -51,17 +52,21 @@ model.summary()
 # end::mcts_go_cnn_simple_model[]
 
 # tag::mcts_go_cnn_simple_eval[]
-model.compile(loss='mean_squared_error',
-              optimizer='sgd',
-              metrics=['accuracy'])
+try:
+    with tf.device('/device:GPU:0'):
+        model.compile(loss='mean_squared_error',
+                      optimizer='sgd',
+                      metrics=['accuracy'])
 
-model.fit(X_train, Y_train,
-          batch_size=64,
-          epochs=5,
-          verbose=1,
-          validation_data=(X_test, Y_test))
+        model.fit(X_train, Y_train,
+                  batch_size=64,
+                  epochs=5,
+                  verbose=1,
+                  validation_data=(X_test, Y_test))
 
-score = model.evaluate(X_test, Y_test, verbose=0)
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
-# end::mcts_go_cnn_eval[]
+        score = model.evaluate(X_test, Y_test, verbose=0)
+        print('Test loss:', score[0])
+        print('Test accuracy:', score[1])
+        # end::mcts_go_cnn_eval[]
+except RuntimeError as e:
+    print(e)

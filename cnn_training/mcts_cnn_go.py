@@ -2,6 +2,7 @@ from __future__ import print_function
 
 # tag::mcts_go_cnn_preprocessing[]
 import numpy as np
+import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
@@ -38,18 +39,22 @@ model.add(Dropout(rate=0.5))
 model.add(Dense(size * size, activation='softmax'))
 model.summary()
 
-model.compile(loss='categorical_crossentropy',
-              optimizer='sgd',
-              metrics=['accuracy'])
-# end::mcts_go_cnn_model[]
+try:
+    with tf.device('GPU:0'):
+        model.compile(loss='categorical_crossentropy',
+                      optimizer='sgd',
+                      metrics=['accuracy'])
+        # end::mcts_go_cnn_model[]
 
-# tag::mcts_go_cnn_eval[]
-model.fit(X_train, Y_train,
-          batch_size=64,
-          epochs=100,
-          verbose=1,
-          validation_data=(X_test, Y_test))
-score = model.evaluate(X_test, Y_test, verbose=0)
+        # tag::mcts_go_cnn_eval[]
+        model.fit(X_train, Y_train,
+                  batch_size=64,
+                  epochs=100,
+                  verbose=1,
+                  validation_data=(X_test, Y_test))
+        score = model.evaluate(X_test, Y_test, verbose=0)
+except RuntimeError as e:
+    print(e)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 # end::mcts_go_cnn_eval[]
