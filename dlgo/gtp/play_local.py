@@ -15,6 +15,13 @@ from dlgo.scoring import compute_game_result
 # end::play_local_imports[]
 # TODO: py3 problems with strings
 
+from os import name, system
+
+def clear():
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
 
 # tag::play_local_init[]
 class LocalGtpBot:
@@ -55,12 +62,14 @@ class LocalGtpBot:
 # tag::play_local_commands[]
     def send_command(self, cmd):
         self.gtp_stream.stdin.write(cmd.encode('utf-8'))
+        self.gtp_stream.stdin.flush()
 
     def get_response(self):
         succeeded = False
         result = ''
         while not succeeded:
-            line = self.gtp_stream.stdout.readline()
+            line = self.gtp_stream.stdout.readline().decode('utf-8')
+            self.gtp_stream.stdout.flush()
             if line[0] == '=':
                 succeeded = True
                 line = line.strip()
@@ -100,7 +109,7 @@ class LocalGtpBot:
                 self.play_our_move()
             else:
                 self.play_their_move()
-            print(chr(27) + "[2J")
+            clear()
             print_board(self.game_state.board)
             print("Estimated result: ")
             print(compute_game_result(self.game_state))
@@ -145,9 +154,10 @@ class LocalGtpBot:
             self.sgf.append(";{}[{}]\n".format(their_letter, self.sgf.coordinates(move)))
 # end::play_local_their[]
 
-
+"""
 if __name__ == "__main__":
-    bot = load_prediction_agent(h5py.File("../../agents/deep_bot.h5", "r"))
+    bot = load_prediction_agent(h5py.File("../../agents/betago.hdf5", "r"))
     gnu_go = LocalGtpBot(go_bot=bot, termination=PassWhenOpponentPasses(),
-                         handicap=0, opponent='gnugo', )
+                         handicap=0, opponent='pachi', )
     gnu_go.run()
+"""

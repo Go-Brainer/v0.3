@@ -5,14 +5,11 @@ from dlgo.agent.predict import load_prediction_agent
 import h5py
 import tensorflow as tf
 
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpus[0], True)
 
-try:
-    with tf.device('GPU:0'):
-        bot = load_prediction_agent(h5py.File("./agents/deep_bot.h5", "r"))
-
-        gtp_bot = LocalGtpBot(go_bot=bot, termination=PassWhenOpponentPasses(),
-                              handicap=0, opponent='gnugo')
-        gtp_bot.run()
-except RuntimeError as e:
-    print(e)
+bot = load_prediction_agent(h5py.File("./agents/deep_bot20191113-195136._s1000e20.h5", "r"))
+gtp_bot = LocalGtpBot(go_bot=bot, termination=PassWhenOpponentPasses(),
+                      handicap=9, opponent='gnugo')
+gtp_bot.run()
 # end::gtp_pachi[]

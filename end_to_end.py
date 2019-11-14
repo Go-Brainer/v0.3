@@ -16,15 +16,21 @@ from multiprocessing import freeze_support
 
 
 def main():
+    samp = 1000
+    epo = 20
+
+
     # tag::e2e_processor[]
-    data_dir = "data/" + time.strftime("%Y%m%d-%H%M%S")
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    data_dir = "data/" + timestr
+    model_h5filename = "./agents/deep_bot_" + timestr + "_s" + str(samp) + "e" + str(epo) + ".h5"
 
     go_board_rows, go_board_cols = 19, 19
     nb_classes = go_board_rows * go_board_cols
     encoder = XPlaneEncoder((go_board_rows, go_board_cols))
     processor = GoDataProcessor(encoder=encoder.name(), data_directory=data_dir)
 
-    X, y = processor.load_go_data(num_samples=100)
+    X, y = processor.load_go_data(num_samples=samp)
     # end::e2e_processor[]
 
     # tag::e2e_model[]
@@ -38,16 +44,16 @@ def main():
             model.add(Dense(nb_classes, activation='softmax'))
             model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
-            model.fit(X, y, batch_size=128, epochs=1, verbose=1)
+            model.fit(X, y, batch_size=128, epochs=epo, verbose=1)
             # end::e2e_model[]
 
             # tag::e2e_agent[]
             deep_learning_bot = DeepLearningAgent(model, encoder)
-            deep_learning_bot.serialize(h5py.File("./agents/deep_bot_test.h5", "w"))
+            deep_learning_bot.serialize(h5py.File(model_h5filename, "w"))
             # end::e2e_agent[]
 
             # tag::e2e_load_agent[]
-            model_file = h5py.File("./agents/deep_bot_test.h5", "r")
+            model_file = h5py.File(model_h5filename, "r")
             bot_from_file = load_prediction_agent(model_file)
 
             web_app = get_web_app({'predict': bot_from_file})

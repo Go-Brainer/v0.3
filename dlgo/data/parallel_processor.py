@@ -41,7 +41,7 @@ class GoDataProcessor:
         index = KGSIndex(data_directory=self.data_dir)
         index.download_files()
 
-        sampler = Sampler(data_dir=self.data_dir)
+        sampler = Sampler(data_dir=self.data_dir, num_test_games=10000)
         data = sampler.draw_data(data_type, num_samples)
 
         self.map_to_workers(data_type, data)  # <1>
