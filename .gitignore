@@ -1,5 +1,6 @@
 *.pyc
 .idea/
+.data/
 *.tar.gz
 *.tar
 *.h5

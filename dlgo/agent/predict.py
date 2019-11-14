@@ -1,6 +1,5 @@
 # tag::dl_agent_imports[]
 import numpy as np
-import h5py
 
 from dlgo.agent.base import Agent
 from dlgo.agent.helpers import is_point_an_eye

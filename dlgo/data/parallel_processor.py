@@ -22,8 +22,8 @@ from dlgo.encoders.base import get_encoder_by_name
 
 def worker(jobinfo):
     try:
-        clazz, encoder, zip_file, data_file_name, game_list = jobinfo
-        clazz(encoder=encoder).process_zip(zip_file, data_file_name, game_list)
+        clazz, encoder, data_dir, zip_file, data_file_name, game_list = jobinfo
+        clazz(encoder=encoder, data_directory=data_dir).process_zip(zip_file, data_file_name, game_list)
     except (KeyboardInterrupt, SystemExit):
         raise Exception('>>> Exiting child process.')
 
@@ -37,6 +37,7 @@ class GoDataProcessor:
 # tag::load_generator[]
     def load_go_data(self, data_type='train', num_samples=1000,
                      use_generator=False):
+        test_self_data_dir = self.data_dir
         index = KGSIndex(data_directory=self.data_dir)
         index.download_files()
 
@@ -178,7 +179,7 @@ class GoDataProcessor:
             base_name = zip_name.replace('.tar.gz', '')
             data_file_name = base_name + data_type
             if not os.path.isfile(self.data_dir + '/' + data_file_name):
-                zips_to_process.append((self.__class__, self.encoder_string, zip_name,
+                zips_to_process.append((self.__class__, self.encoder_string, self.data_dir, zip_name,
                                         data_file_name, indices_by_zip_name[zip_name]))
 
         cores = multiprocessing.cpu_count()  # Determine number of CPU cores and split work load among them
