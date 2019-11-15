@@ -39,3 +39,4 @@ def load_model_from_hdf5_group(f, custom_objects=None):
         return load_model(tempfname, custom_objects=custom_objects)
     finally:
         os.unlink(tempfname)
+
