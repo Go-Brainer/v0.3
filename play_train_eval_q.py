@@ -10,6 +10,7 @@ from collections import namedtuple
 
 import h5py
 import numpy as np
+import tensorflow as tf
 
 from dlgo import kerasutil
 from dlgo import scoring
@@ -90,6 +91,18 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
                  experience_filename,
                  gpu_frac):
 
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        # Restrict TensorFlow to only use the first GPU
+        try:
+            tf.config.set_soft_device_placement(True)
+            tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
+            tf.config.experimental.set_memory_growth(gpus[0], True)
+        except RuntimeError as e:
+            print(e)
+    else:
+        return None
+
     random.seed(int(time.time()) + os.getpid())
     np.random.seed(int(time.time()) + os.getpid())
 
@@ -123,6 +136,7 @@ def do_self_play(board_size, agent1_filename, agent2_filename,
     print('Saving experience buffer to %s\n' % experience_filename)
     with h5py.File(experience_filename, 'w') as experience_outf:
         experience.serialize(experience_outf)
+
 
 
 def generate_experience(learning_agent, reference_agent, exp_file,
@@ -175,6 +189,17 @@ def generate_experience(learning_agent, reference_agent, exp_file,
 
 def train_worker(learning_agent, output_file, experience_file,
                  lr, batch_size):
+
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        # Restrict TensorFlow to only use the first GPU
+        try:
+            tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
+            tf.config.experimental.set_memory_growth(gpus[0], True)
+            tf.config.set_soft_device_placement(True)
+        except RuntimeError as e:
+            print(e)
+
     learning_agent = load_agent(learning_agent)
     with h5py.File(experience_file, 'r') as expf:
         exp_buffer = rl.load_experience(expf)
@@ -182,6 +207,7 @@ def train_worker(learning_agent, output_file, experience_file,
 
     with h5py.File(output_file, 'w') as updated_agent_outf:
         learning_agent.serialize(updated_agent_outf)
+
 
 
 def train_on_experience(learning_agent, output_file, experience_file,
@@ -204,6 +230,16 @@ def train_on_experience(learning_agent, output_file, experience_file,
 
 
 def play_games(args):
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        # Restrict TensorFlow to only use the first GPU
+        try:
+            tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
+            tf.config.experimental.set_memory_growth(gpus[0], True)
+            tf.config.set_soft_device_placement(True)
+        except RuntimeError as e:
+            print(e)
+
     agent1_fname, agent2_fname, num_games, board_size, gpu_frac, temperature = args
 
     random.seed(int(time.time()) + os.getpid())
@@ -264,20 +300,22 @@ def evaluate(learning_agent, reference_agent,
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--agent', default="./agents/deep_bot20191113-195136._s1000e20.h5")
-    parser.add_argument('--games-per-batch', '-g', type=int, default=10)
+    parser.add_argument('--agent', default="./agents/q_agent_0.h5")
+    parser.add_argument('--games-per-batch', '-g', type=int, default=100)
     parser.add_argument('--work-dir', '-d', default="./")
     parser.add_argument('--num-workers', '-w', type=int, default=1)
-    parser.add_argument('--temperature', '-t', type=float, default=0.0)
+    parser.add_argument('--temperature', '-t', type=float, default=0.5)
     parser.add_argument('--board-size', '-b', type=int, default=19)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--bs', type=int, default=512)
-    parser.add_argument('--log-file', '-l', default="q_log_")
+    parser.add_argument('--log-file', '-l', default="q_log")
 
     args = parser.parse_args()
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    logf_name = "./logs/" + args.log_file + timestr
-    logf = open(args.log_file, 'a')
+    logf_name = args.log_file + timestr + ".txt"
+    if not os.path.exists("./logs"):
+        os.makedirs("./logs")
+    logf = open("./logs" + logf_name, 'a')
     logf.write('----------------------\n')
     logf.write('Starting from %s at %s\n' % (
         args.agent, datetime.datetime.now()))

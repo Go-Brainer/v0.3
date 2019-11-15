@@ -16,8 +16,8 @@ from multiprocessing import freeze_support
 
 
 def main():
-    samp = 1000
-    epo = 20
+    samp = 100
+    epo = 1
 
 
     # tag::e2e_processor[]
@@ -44,7 +44,7 @@ def main():
             model.add(Dense(nb_classes, activation='softmax'))
             model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
-            model.fit(X, y, batch_size=128, epochs=epo, verbose=1)
+            vals = model.fit(X, y, batch_size=128, epochs=epo, verbose=1)
             # end::e2e_model[]
 
             # tag::e2e_agent[]

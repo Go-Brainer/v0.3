@@ -292,7 +292,7 @@ def evaluate(learning_agent, reference_agent,
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--agent', default="./agents/deep_bot20191113-195136._s1000e20.h5")
-    parser.add_argument('--games-per-batch', '-g', type=int, default=10)
+    parser.add_argument('--games-per-batch', '-g', type=int, default=1)
     parser.add_argument('--work-dir', '-d', default="./")
     parser.add_argument('--num-workers', '-w', type=int, default=1)
     parser.add_argument('--temperature', '-t', type=float, default=0.0)

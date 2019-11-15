@@ -55,7 +55,7 @@ class QAgent(Agent):
         move_vectors = np.zeros((num_moves, self.encoder.num_points()))
         for i, move in enumerate(moves):
             move_vectors[i][move] = 1
-        predict_param = [board_tensors, move_vectors]
+
         values = self.model.predict([board_tensors, move_vectors])
         values = values.reshape(len(moves))
 
@@ -112,6 +112,8 @@ class QAgent(Agent):
             reward = experience.rewards[i]
             actions[i][action] = 1
             y[i] = 1 if reward > 0 else 0
+
+        xpstates = experience.states
 
         self.model.fit(
             [experience.states, actions], y,
