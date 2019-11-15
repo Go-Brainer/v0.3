@@ -18,8 +18,8 @@
 - [x] Made a self-improving Deep Learning agent with the Q-learning algorithm (ch. 11)
 - [ ] Made a self-improving Deep Learning agent with the actor-critic method (based on advantage: A = R – V(s),
         where R is an estimate of the action-value method Q(s, a). (ch. 12)
-- [ ] Create a 48 plane board encoder, to make your Go bot more powerful.
-- [ ] Create TWO deep CNN policy networks for move prediction – one for more accurate results,
+- [x] Create a 48 plane board encoder, to make your Go bot more powerful.
+- [x] Create TWO deep CNN policy networks for move prediction – one for more accurate results,
         and the other for faster evaluation (ch. 13)
 - [ ] Use the strong self-play CNN policy network to build your self-play value network.
 - [ ] Use the fast self-play CNN policy network to guide your tree-search algorithm.
