@@ -399,7 +399,7 @@ class GameState():
         game_result = compute_game_result(self)
         return game_result.winner
 
-    def print_game_results(self, komi):
+    def print_game_results(self, komi=7.5):
         if self.last_move.is_resign:
             resigned = "White" if self.next_player == Player.black else "Black"
             winner = "White" if resigned == "Black" else "Black"
