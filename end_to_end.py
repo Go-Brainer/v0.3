@@ -19,7 +19,6 @@ def main():
     samp = 100
     epo = 1
 
-
     # tag::e2e_processor[]
     timestr = time.strftime("%Y%m%d-%H%M%S")
     data_dir = "data/" + timestr
