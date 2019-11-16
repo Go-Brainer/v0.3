@@ -1,7 +1,7 @@
-from dlgo import rl
-from dlgo import scoring
-from dlgo import goboard_fast as goboard
-from dlgo.gotypes import Player
+from algo import rl
+from algo import scoring
+from algo import goboard_fast as goboard
+from algo.gotypes import Player
 
 from collections import namedtuple
 

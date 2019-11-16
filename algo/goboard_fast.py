@@ -2,7 +2,7 @@ import copy
 from algo.gotypes import Player, Point
 from algo.scoring import compute_game_result
 from algo import zobrist
-from algo.utils import MoveAge
+from algo.utils import MoveAge, print_board, print_move
 
 __all__ = [
     'Board',
@@ -357,6 +357,8 @@ class GameState():
         return next_situation in self.previous_states
 
     def is_valid_move(self, move):
+        if isinstance(move, tuple):
+            print("HERE.")
         if self.is_over():
             return False
         if move.is_pass or move.is_resign:
@@ -367,7 +369,7 @@ class GameState():
             not self.does_move_violate_ko(self.next_player, move))
 
     def is_over(self):
-        if self.last_move is None:
+        if self.last_move is None or self.previous_state is None:
             return False
         if self.last_move.is_resign:
             return True

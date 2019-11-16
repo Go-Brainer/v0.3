@@ -2,7 +2,7 @@
 import numpy as np
 from algo.agent.base import Agent
 from algo.goboard_fast import Move
-from dlgo import kerasutil
+from algo import kerasutil
 import operator
 # end::alphago_imports[]
 

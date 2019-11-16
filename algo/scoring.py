@@ -64,7 +64,6 @@ trivially dead groups.
 
 # tag::scoring_evaluate_territory[]
 def evaluate_territory(board):
-
     status = {}
     for r in range(1, board.num_rows + 1):
         for c in range(1, board.num_cols + 1):
@@ -101,7 +100,6 @@ identify all the boundary points.
 
 # tag::scoring_collect_region[]
 def _collect_region(start_pos, board, visited=None):
-
     if visited is None:
         visited = {}
     if start_pos in visited:

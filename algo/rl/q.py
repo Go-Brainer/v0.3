@@ -2,11 +2,11 @@ import numpy as np
 
 from keras.optimizers import SGD
 
-from dlgo import encoders
-from dlgo import goboard
-from dlgo import kerasutil
-from dlgo.agent import Agent
-from dlgo.agent.helpers import is_point_an_eye
+from algo import encoders
+from algo import goboard_fast as goboard
+from algo import kerasutil
+from algo.agent import Agent
+from algo.agent.helpers_fast import is_point_an_eye
 
 __all__ = [
     'QAgent',

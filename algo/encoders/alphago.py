@@ -3,7 +3,9 @@ from algo.encoders.utils import is_ladder_escape, is_ladder_capture
 from algo.gotypes import Point, Player
 from algo.goboard_fast import Move
 from algo.agent.helpers_fast import is_point_an_eye
+from algo.utils import print_board
 import numpy as np
+import tensorflow as tf
 
 """
 Feature name            num of planes   Description
@@ -71,18 +73,17 @@ class AlphaGoEncoder(Encoder):
 
                 ages = min(game_state.board.move_ages.get(r, c), 8)
                 if ages > 0:
-                    print(ages)
-                    board_tensor[offset("turns_since") + ages][r][c] = 1
+                    board_tensor[int(offset("turns_since") + ages)][r][c] = 1
 
                 if game_state.board.get_go_string(point):
                     liberties = min(game_state.board.get_go_string(point).num_liberties, 8)
-                    board_tensor[offset("liberties") + liberties][r][c] = 1
+                    board_tensor[int(offset("liberties") + liberties)][r][c] = 1
 
                 move = Move(point)
                 if game_state.is_valid_move(move):
                     new_state = game_state.apply_move(move)
                     liberties = min(new_state.board.get_go_string(point).num_liberties, 8)
-                    board_tensor[offset("liberties_after") + liberties][r][c] = 1
+                    board_tensor[int(offset("liberties_after") + liberties)][r][c] = 1
 
                     adjacent_strings = [game_state.board.get_go_string(nb)
                                         for nb in point.neighbors()]
@@ -92,13 +93,13 @@ class AlphaGoEncoder(Encoder):
                         if go_string and go_string.num_liberties == 1 and go_string.color == other_player:
                             capture_count += len(go_string.stones)
                     capture_count = min(capture_count, 8)
-                    board_tensor[offset("capture_size") + capture_count][r][c] = 1
+                    board_tensor[int(offset("capture_size") + capture_count)][r][c] = 1
 
                 if go_string and go_string.num_liberties == 1:
                     go_string = game_state.board.get_go_string(point)
                     if go_string:
                         num_atari_stones = min(len(go_string.stones), 8)
-                        board_tensor[offset("self_atari_size") + num_atari_stones][r][c] = 1
+                        board_tensor[int(offset("self_atari_size") + num_atari_stones)][r][c] = 1
 
                 if is_ladder_capture(game_state, point):
                     board_tensor[offset("ladder_capture")][r][c] = 1
@@ -111,7 +112,6 @@ class AlphaGoEncoder(Encoder):
                         board_tensor[offset("ones")] = self.ones()
                     else:
                         board_tensor[offset("zeros")] = self.zeros()
-
         return board_tensor
 
     def ones(self):

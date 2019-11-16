@@ -10,6 +10,8 @@ import numpy as np
 import multiprocessing
 from os import sys
 from keras.utils import to_categorical
+import tensorflow as tf
+import time
 
 from algo.gosgf import Sgf_game
 from algo.goboard_fast import Board, GameState, Move
@@ -19,14 +21,13 @@ from algo.data.sampling import Sampler
 from algo.data.generator import DataGenerator
 from algo.encoders.base import get_encoder_by_name
 
-
 def worker(jobinfo):
     try:
         clazz, encoder, data_dir, zip_file, data_file_name, game_list = jobinfo
         clazz(encoder=encoder, data_directory=data_dir).process_zip(zip_file, data_file_name, game_list)
+        print("Zip Processed.")
     except (KeyboardInterrupt, SystemExit):
         raise Exception('>>> Exiting child process.')
-
 
 class GoDataProcessor:
     def __init__(self, encoder='simple', data_directory='data'):
@@ -41,7 +42,7 @@ class GoDataProcessor:
         index = KGSIndex(data_directory=self.data_dir)
         index.download_files()
 
-        sampler = Sampler(data_dir=self.data_dir, num_test_games=10000)
+        sampler = Sampler(data_dir=self.data_dir, num_test_games=1000)
         data = sampler.draw_data(data_type, num_samples)
 
         self.map_to_workers(data_type, data)  # <1>
@@ -155,6 +156,7 @@ class GoDataProcessor:
         go_board = Board(19, 19)
         first_move_done = False
         move = None
+        row = col = None
         game_state = GameState.new_game(19)
         if sgf.get_handicap() is not None and sgf.get_handicap() != 0:
             for setup in sgf.get_root().get_setup_stones():
@@ -162,6 +164,7 @@ class GoDataProcessor:
                     row, col = move
                     go_board.place_stone(Player.black, Point(row + 1, col + 1))  # black gets handicap
             first_move_done = True
+            move = Move(Point(row=row, col=col))
             game_state = GameState(go_board, Player.white, None, move)
         return game_state, first_move_done
 
@@ -187,6 +190,11 @@ class GoDataProcessor:
         p = pool.map_async(worker, zips_to_process)
         try:
             _ = p.get()
+        except KeyboardInterrupt:  # Caught keyboard interrupt, terminating workers
+            pool.terminate()
+            pool.join()
+            sys.exit(-1)
+
         except KeyboardInterrupt:  # Caught keyboard interrupt, terminating workers
             pool.terminate()
             pool.join()
