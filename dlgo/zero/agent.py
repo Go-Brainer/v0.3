@@ -1,13 +1,10 @@
 import numpy as np
 from keras.optimizers import SGD
-from dlgo import kerasutil
 
 from ..agent import Agent
-from .encoder import ZeroEncoder
 
 __all__ = [
     'ZeroAgent',
-    'load_zero_agent',
 ]
 
 
@@ -37,7 +34,7 @@ class ZeroTreeNode:
         self.children = {}                        # <2>
 
     def moves(self):                              # <3>
-        return self.branches.keys()               # <3>
+        return list(self.branches.keys())            # <3>
 
     def add_child(self, move, child_node):        # <4>
         self.children[move] = child_node          # <4>
@@ -94,15 +91,9 @@ class ZeroAgent(Agent):
         for i in range(self.num_rounds):              # <2>
             node = root
             next_move = self.select_branch(node)
-            if next_move is None:
-                b_size = self.encoder.board_size
-                return ZeroEncoder.decode_move_index(self.encoder, index=self.encoder.board_size * self.encoder.board_size)
             while node.has_child(next_move):          # <3>
                 node = node.get_child(next_move)
                 next_move = self.select_branch(node)
-                if next_move is None:
-                    b_size = self.encoder.board_size
-                    return ZeroEncoder.decode_move_index(self.encoder, index=self.encoder.board_size * self.encoder.board_size)
 # end::zero_walk_down[]
 
 # tag::zero_back_up[]
@@ -147,10 +138,8 @@ class ZeroAgent(Agent):
             p = node.prior(move)
             n = node.visit_count(move)
             return q + self.c * p * np.sqrt(total_n) / (n + 1)
-        node_moves = list(node.moves())
-        if len(node_moves) == 0:
-            return None
-        return max(node_moves, key=score_branch)             # <1>
+
+        return max(node.moves(), key=score_branch)             # <1>
 # end::zero_select_branch[]
 
 # tag::zero_create_node[]
@@ -193,23 +182,3 @@ class ZeroAgent(Agent):
             model_input, [action_target, value_target],
             batch_size=batch_size)
 # end::zero_train[]
-
-    def serialize(self, h5file):
-        h5file.create_group('model')
-        kerasutil.save_model_to_hdf5_group(self.model, h5file['model'])
-
-
-def load_zero_agent(h5file):
-    model = kerasutil.load_model_from_hdf5_group(h5file['model'])
-    return model
-
-"""
-    def __init__(self, model, encoder, rounds_per_move=1600, c=2.0):
-        self.model = model
-        self.encoder = encoder
-
-        self.collector = None
-
-        self.num_rounds = rounds_per_move
-        self.c = c
-"""

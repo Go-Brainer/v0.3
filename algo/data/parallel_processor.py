@@ -12,6 +12,7 @@ from os import sys
 from keras.utils import to_categorical
 import tensorflow as tf
 import time
+from datetime import datetime as dt
 
 from algo.gosgf import Sgf_game
 from algo.goboard_fast import Board, GameState, Move
@@ -21,13 +22,14 @@ from algo.data.sampling import Sampler
 from algo.data.generator import DataGenerator
 from algo.encoders.base import get_encoder_by_name
 
+
 def worker(jobinfo):
     try:
         clazz, encoder, data_dir, zip_file, data_file_name, game_list = jobinfo
         clazz(encoder=encoder, data_directory=data_dir).process_zip(zip_file, data_file_name, game_list)
-        print("Zip Processed.")
     except (KeyboardInterrupt, SystemExit):
         raise Exception('>>> Exiting child process.')
+
 
 class GoDataProcessor:
     def __init__(self, encoder='simple', data_directory='data'):
@@ -38,11 +40,10 @@ class GoDataProcessor:
 # tag::load_generator[]
     def load_go_data(self, data_type='train', num_samples=1000,
                      use_generator=False):
-        test_self_data_dir = self.data_dir
         index = KGSIndex(data_directory=self.data_dir)
         index.download_files()
 
-        sampler = Sampler(data_dir=self.data_dir, num_test_games=1000)
+        sampler = Sampler(data_dir=self.data_dir, num_test_games=int(num_samples/10))
         data = sampler.draw_data(data_type, num_samples)
 
         self.map_to_workers(data_type, data)  # <1>
@@ -69,8 +70,11 @@ class GoDataProcessor:
         return tar_file
 
     def process_zip(self, zip_file_name, data_file_name, game_list):
+        pid_header = str(os.getpid()) + ": "
+        print(dt.now().strftime("%H:%M:%S.%f\t") + pid_header + "working on " + zip_file_name)
         tar_file = self.unzip_data(zip_file_name)
         zip_file = tarfile.open(self.data_dir + '/' + tar_file)
+
         name_list = zip_file.getnames()
         total_examples = self.num_total_examples(zip_file, game_list, name_list)
 
@@ -119,6 +123,7 @@ class GoDataProcessor:
             current_labels, labels = labels[:chunksize], labels[chunksize:]
             np.save(feature_file, current_features)
             np.save(label_file, current_labels)
+        print(dt.now().strftime("%H:%M:%S.%f\t") + pid_header + "completed " + zip_file_name)
 
     def consolidate_games(self, name, samples):
         files_needed = set(file_name for file_name, index in samples)
@@ -190,11 +195,6 @@ class GoDataProcessor:
         p = pool.map_async(worker, zips_to_process)
         try:
             _ = p.get()
-        except KeyboardInterrupt:  # Caught keyboard interrupt, terminating workers
-            pool.terminate()
-            pool.join()
-            sys.exit(-1)
-
         except KeyboardInterrupt:  # Caught keyboard interrupt, terminating workers
             pool.terminate()
             pool.join()

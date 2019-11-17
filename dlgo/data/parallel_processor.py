@@ -22,7 +22,7 @@ from dlgo.encoders.base import get_encoder_by_name
 
 def worker(jobinfo):
     try:
-        clazz, encoder, data_dir, zip_file, data_file_name, game_list = jobinfo
+        clazz, encoder, zip_file, data_dir, data_file_name, game_list = jobinfo
         clazz(encoder=encoder, data_directory=data_dir).process_zip(zip_file, data_file_name, game_list)
     except (KeyboardInterrupt, SystemExit):
         raise Exception('>>> Exiting child process.')
@@ -37,11 +37,10 @@ class GoDataProcessor:
 # tag::load_generator[]
     def load_go_data(self, data_type='train', num_samples=1000,
                      use_generator=False):
-        test_self_data_dir = self.data_dir
         index = KGSIndex(data_directory=self.data_dir)
         index.download_files()
 
-        sampler = Sampler(data_dir=self.data_dir, num_test_games=10000)
+        sampler = Sampler(data_dir=self.data_dir, num_test_games=int(num_samples/10))
         data = sampler.draw_data(data_type, num_samples)
 
         self.map_to_workers(data_type, data)  # <1>
@@ -70,6 +69,7 @@ class GoDataProcessor:
     def process_zip(self, zip_file_name, data_file_name, game_list):
         tar_file = self.unzip_data(zip_file_name)
         zip_file = tarfile.open(self.data_dir + '/' + tar_file)
+
         name_list = zip_file.getnames()
         total_examples = self.num_total_examples(zip_file, game_list, name_list)
 
@@ -139,6 +139,7 @@ class GoDataProcessor:
                 y = to_categorical(y.astype(int), 19 * 19)
                 feature_list.append(x)
                 label_list.append(y)
+
         features = np.concatenate(feature_list, axis=0)
         labels = np.concatenate(label_list, axis=0)
 
@@ -179,8 +180,8 @@ class GoDataProcessor:
             base_name = zip_name.replace('.tar.gz', '')
             data_file_name = base_name + data_type
             if not os.path.isfile(self.data_dir + '/' + data_file_name):
-                zips_to_process.append((self.__class__, self.encoder_string, self.data_dir, zip_name,
-                                        data_file_name, indices_by_zip_name[zip_name]))
+                zips_to_process.append((self.__class__, self.encoder_string, zip_name,
+                                        self.data_dir, data_file_name, indices_by_zip_name[zip_name]))
 
         cores = multiprocessing.cpu_count()  # Determine number of CPU cores and split work load among them
         pool = multiprocessing.Pool(processes=cores)

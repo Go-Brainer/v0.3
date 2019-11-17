@@ -88,6 +88,17 @@ class Sampler:
             if line != "":
                 (filename, index) = eval(line)
                 self.test_games.append((filename, index))
+                if len(self.test_games) == self.num_test_games:
+                    break
+        """If there were not enough games in the file"""
+        if len(self.test_games) < self.num_test_games:
+            more_samples = self.draw_samples(self.num_test_games - len(self.test_games))
+            test_sample_file = open(self.test_folder, 'a')
+            for sample in more_samples:
+                test_sample_file.write(str(sample) + "\n")
+            test_sample_file.close()
+            self.test_games.extend(more_samples)
+
 
     def draw_training_samples(self, num_sample_games):
         """Draw training games, not overlapping with any of the test games."""

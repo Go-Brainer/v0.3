@@ -12,6 +12,7 @@ from algo.networks.alphago import alphago_model
 from algo.agent.pg import PolicyAgent
 from algo.agent.predict import load_prediction_agent
 from algo.encoders.alphago import AlphaGoEncoder
+from algo.encoders.sevenplane import SevenPlaneEncoder
 from algo.rl.simulate import experience_simulation
 from algo.networks.alphago import alphago_model
 from algo.rl import ValueAgent, load_experience
@@ -25,24 +26,25 @@ def supervised_learning(board_size, pwd, filename, data_dir, samples, epochs):
         with tf.device("/GPU:0"):
             rows = cols = board_size
             num_classes = rows * cols
-            num_games = samples
 
-            encoder = AlphaGoEncoder()
+            #encoder = AlphaGoEncoder()
+            encoder = SevenPlaneEncoder((board_size, board_size))
             processor = GoDataProcessor(encoder=encoder.name(), data_directory=data_dir)
-            generator = processor.load_go_data('train', num_games, use_generator=True)
-            test_generator = processor.load_go_data('test', num_games, use_generator=True)
+            generator = processor.load_go_data('train', samples, use_generator=True)
+            test_generator = processor.load_go_data('test', samples, use_generator=True)
             # end::alphago_sl_data[]
 
             # tag::alphago_sl_model[]
-            #input_shape = (encoder.num_planes, rows, cols)
-            #alphago_sl_policy = alphago_model(input_shape, is_policy_net=True)
-            #alphago_sl_policy.compile('sgd', 'categorical_crossentropy', metrics=['accuracy'])
-            bot_from_file = load_prediction_agent(h5py.File(pwd + "/" + filename, 'r'))
-            alphago_sl_policy = bot_from_file.model
+            input_shape = (encoder.num_planes, rows, cols)
+            alphago_sl_policy = alphago_model(input_shape, is_policy_net=True)
+            alphago_sl_policy.compile('sgd', 'categorical_crossentropy', metrics=['accuracy'])
+
+            # bot_from_file = load_prediction_agent(h5py.File(pwd + "/" + filename, 'r'))
+            # alphago_sl_policy = bot_from_file.model
             # end::alphago_sl_model[]
 
             # tag::alphago_sl_train[]
-            batch_size = 32
+            batch_size = 128
             alphago_sl_policy.fit_generator(
                 generator=generator.generate(batch_size, num_classes),
                 epochs=epochs,
@@ -80,8 +82,8 @@ def reinforcement_learning():
 
 def main():
     board_size = 19
-    sl_samples = 500
-    sl_epochs = 20
+    sl_samples = 10000
+    sl_epochs = 200
     pwd = "./ag_agents"
     if not os.path.isdir(pwd):
         os.makedirs(pwd)
@@ -89,7 +91,7 @@ def main():
     sl_dir = pwd + "/sl"
     if not os.path.isdir(sl_dir):
         os.makedirs(sl_dir)
-    kgs_dir = sl_dir + "/kgs_data/"
+    kgs_dir = sl_dir + "/kgs_data"
     if not os.path.isdir(kgs_dir):
         os.makedirs(kgs_dir)
     sl_filename = "ag_sl_0.h5"

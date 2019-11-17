@@ -16,17 +16,17 @@ from multiprocessing import freeze_support
 
 
 def main():
-    samp = 100
+    samp = 1000
     epo = 1
 
     # tag::e2e_processor[]
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    data_dir = "data/" + timestr
     model_h5filename = "./agents/deep_bot_" + timestr + "_s" + str(samp) + "e" + str(epo) + ".h5"
 
     go_board_rows, go_board_cols = 19, 19
     nb_classes = go_board_rows * go_board_cols
     encoder = XPlaneEncoder((go_board_rows, go_board_cols))
+    data_dir = "data/" + str(encoder.num_planes) + "-planes"
     processor = GoDataProcessor(encoder=encoder.name(), data_directory=data_dir)
 
     X, y = processor.load_go_data(num_samples=samp)

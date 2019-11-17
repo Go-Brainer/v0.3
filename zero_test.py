@@ -1,7 +1,6 @@
 import argparse
 
 import h5py
-import tensorflow as tf
 
 from keras.layers import Activation, BatchNormalization, Conv2D, Dense, Flatten, Input
 from keras.models import Model
@@ -10,17 +9,7 @@ from dlgo.goboard_fast import GameState, Player, Point
 
 
 def main():
-    gpus = tf.config.experimental.list_physical_devices('GPU')
-    if gpus:
-        # Restrict TensorFlow to only use the first GPU
-        try:
-            tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
-            tf.config.experimental.set_memory_growth(gpus[0], True)
-            tf.config.set_soft_device_placement(True)
-        except RuntimeError as e:
-            print(e)
-
-    board_size = 19
+    board_size = 9
     encoder = zero.ZeroEncoder(board_size)
 
     board_input = Input(shape=encoder.shape(), name='board_input')
